@@ -23,3 +23,27 @@ function markerColor(depth) {
                       "#a3f600";
 }
 
+// importing data
+d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month.geojson").then(data => {
+  console.log(data);
+  // Looping to create markers
+  data.features.forEach(feature => {
+      let coords = feature.geometry.coordinates;
+      let properties = feature.properties;
+
+      // creating a circle marker
+      L.circleMarker([coords[1], coords[0]], {
+          radius: markerSize(properties.mag),
+          fillColor: markerColor(coords[2]), // depth as the 3rd coordinate
+          color: "#000",
+          weight: 0.5,
+          opacity: 1,
+          fillOpacity: 0.8
+      }).bindPopup(`
+          <h3>${properties.place}</h3>
+          <hr>
+          <p><strong>Magnitude:</strong> ${properties.mag}</p>
+          <p><strong>Depth:</strong> ${coords[2]} km</p>
+      `).addTo(map);
+  });
+});
